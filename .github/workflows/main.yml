@@ -1,0 +1,52 @@
+name: CI_on_PR
+
+on:
+    pull_request:
+        branches: [ "master" ]
+    workflow_dispatch:
+
+jobs:
+
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                distribution: temurin
+                java-version: '25'
+
+            - run: chmod +x ./gradlew
+            - run: ./gradlew classes
+
+    test:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                distribution: temurin
+                java-version: '25'
+
+            - run: chmod +x ./gradlew
+            - run: ./gradlew test
+
+    format:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                distribution: temurin
+                java-version: '25'
+
+            - run: chmod +x ./gradlew
+            - run: ./gradlew spotlessCheck
