@@ -2,6 +2,8 @@ package highlighting.regex;
 
 import highlighting.core.HighlightRegion;
 import highlighting.core.SyntaxHighlighter;
+import highlighting.presets.MiniJavaTokens;
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Implement a simple regex-based highlighting strategy. Unlike the scanning approach, this
@@ -17,7 +19,15 @@ public class RegexHighlighter extends SyntaxHighlighter {
   // {@code HighlightRegion}s, and combine all of these regions into a single list.
   @Override
   public List<HighlightRegion> collectMatches(String text) {
-    throw new UnsupportedOperationException("not implemented yet");
+    var result = new ArrayList<HighlightRegion>();
+
+    // Für jeden Token, den ich implementiert habe, wird die test-Methode aus 'Token' angewendet
+    for (var token : MiniJavaTokens.defaultTokens()) {
+      var matches = token.test(text);
+      result.addAll(matches);
+    }
+
+    return result;
   }
 
   // TODO: Resolve overlapping regions. Assume that {@code regions} has been normalised and sorted.
@@ -26,6 +36,27 @@ public class RegexHighlighter extends SyntaxHighlighter {
   // position are preferred because of the sorting in {@code normalize}.
   @Override
   public List<HighlightRegion> resolveConflicts(List<HighlightRegion> regions) {
-    throw new UnsupportedOperationException("not implemented yet");
+    var result = new ArrayList<HighlightRegion>();
+
+    // normalized-Liste von vorne nach hinten durchgehen
+    for (var region : regions) {
+      boolean overlaps = false;
+
+      for (var existing : result) {
+        // Für jede Region prüfen, ob sie mit einer bereits übernommenen Region überlappt
+        if (region.start() < existing.end() && existing.start() < region.end()) {
+          // Wenn eine Überlappung gefunden wurde, wird die Region verworfen
+          overlaps = true;
+          break;
+        }
+      }
+
+      // Wenn keine Überlappung gefunden wurde, wird die Region übernommen
+      if (!overlaps) {
+        result.add(region);
+      }
+    }
+
+    return result;
   }
 }
