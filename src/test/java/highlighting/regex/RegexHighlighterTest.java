@@ -55,6 +55,7 @@ class RegexHighlighterTest {
   }
 
   // aufeinanderfolgenden Regionen
+  @Test
   void regionsNextToEachother_doNotOverlap() {
     // given
     String text = "new// test";
