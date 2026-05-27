@@ -23,7 +23,9 @@ public final class MiniJavaTokens {
         // Character‑Literal
         Token.of(Pattern.compile("'([^'\\\\]|\\\\.)'"), MiniJavaColours.CHAR_LITERAL_COLOUR),
         // Keywords
-        Token.of(Pattern.compile("\\b(package|import|class|public|private|final|return|null|new)\\b"), MiniJavaColours.KEYWORD_COLOUR),
+        Token.of(
+            Pattern.compile("\\b(package|import|class|public|private|final|return|null|new)\\b"),
+            MiniJavaColours.KEYWORD_COLOUR),
         // Annotationen
         Token.of(Pattern.compile("@[A-Za-z_][A-Za-z0-9_-]*"), MiniJavaColours.ANNOTATION_COLOUR),
         // Einzeilige Kommentare
@@ -31,7 +33,6 @@ public final class MiniJavaTokens {
         // Javadoc‑Kommentare
         Token.of(Pattern.compile("/\\*\\*[\\s\\S]*?\\*/"), MiniJavaColours.JAVADOC_COMMENT_COLOUR),
         // Mehrzeilige Kommentare
-        Token.of(Pattern.compile("/\\*[\\s\\S]*?\\*/"), MiniJavaColours.BLOCK_COMMENT_COLOUR)
-        );
+        Token.of(Pattern.compile("/\\*[\\s\\S]*?\\*/"), MiniJavaColours.BLOCK_COMMENT_COLOUR));
   }
 }
