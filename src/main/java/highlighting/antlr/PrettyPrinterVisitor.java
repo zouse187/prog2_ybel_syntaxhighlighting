@@ -48,7 +48,30 @@ public final class PrettyPrinterVisitor extends MiniJavaBaseVisitor<Void> {
     // - import declarations (one per line),
     // - type declarations (one after another),
     // with sensible blank lines between these parts.
-    return null;
+      // package
+      if (ctx.packageDecl() != null) {
+          visit(ctx.packageDecl());
+          nl();
+          nl();
+      }
+
+      // imports
+      for (var imp : ctx.importDecl()) {
+          visit(imp);
+          nl();
+      }
+      if (!ctx.importDecl().isEmpty()) {
+          nl();
+      }
+
+      // type declarations
+      for (var typeDecl : ctx.typeDecl()) {
+          visit(typeDecl);
+          nl();
+          nl();
+      }
+
+      return null;
   }
 
   @Override
@@ -58,7 +81,18 @@ public final class PrettyPrinterVisitor extends MiniJavaBaseVisitor<Void> {
     // - opening and closing brace,
     // - one member declaration per line,
     // - members indented relative to the class.
-    return null;
+      write("{");
+      nl();
+      currentIndent++;
+
+      for (var decl : ctx.classBodyDeclaration()) {
+          visit(decl);
+          nl();
+      }
+
+      currentIndent--;
+      write("}");
+      return null;
   }
 
   @Override
@@ -68,7 +102,18 @@ public final class PrettyPrinterVisitor extends MiniJavaBaseVisitor<Void> {
     // - opening and closing brace,
     // - one blockStatement per line,
     // - nested blocks indented further.
-    return null;
+      write("{");
+      nl();
+      currentIndent++;
+
+      for (var stmt : ctx.blockStatement()) {
+          visit(stmt);
+          nl();
+      }
+
+      currentIndent--;
+      write("}");
+      return null;
   }
 
   @Override
@@ -76,7 +121,55 @@ public final class PrettyPrinterVisitor extends MiniJavaBaseVisitor<Void> {
     // TODO:
     // Ensure that each statement (if/while/return/block/...) ends up
     // on exactly one line, with proper indentation for nested statements.
-    return null;
+      // Block
+      if (ctx.block() != null) {
+          visit(ctx.block());
+          return null;
+      }
+
+      // if / else
+      if (ctx.IF() != null) {
+          write("if");
+          write(" ");
+          write("(");
+          //visit(ctx.parExpression());
+          visit(ctx.expression());
+          write(")");
+          nl();
+
+          currentIndent++;
+          visit(ctx.statement(0));
+          currentIndent--;
+
+          if (ctx.ELSE() != null) {
+              write("else");
+              nl();
+              currentIndent++;
+              visit(ctx.statement(1));
+              currentIndent--;
+          }
+          return null;
+      }
+
+      // while
+      if (ctx.WHILE() != null) {
+          write("while");
+          write(" ");
+          write("(");
+          //visit(ctx.parExpression());
+          visit(ctx.expression());
+          write(")");
+          nl();
+
+          currentIndent++;
+          visit(ctx.statement(0));
+          currentIndent--;
+          return null;
+      }
+
+      // alles andere: ein Statement, das mit ';' endet
+      visitChildren(ctx);
+      return null;
   }
 
   // ---------------- helper methods ----------------
